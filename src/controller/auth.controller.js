@@ -24,13 +24,11 @@ const { jwt_secret, url } = require("../config");
 const { seed } = require("./seed");
 
 exports.register = catchAsyncErrors(async (req, res, next) => {
-  const { email, first_name, last_name, password, role } = req.body;
+  const { email, first_name, last_name, password } = req.body;
   if (!email || !first_name || !last_name || !password) {
     return next(new ErrorHandler(requiredField.message, requiredField.code));
   }
-  if (!["courier", "admin", "buyer", "seller"].includes(role)) {
-    return next(new ErrorHandler("Invalid role selected", requiredField.code));
-  }
+
   const salt = bcrypt.genSaltSync(10);
   const hash = bcrypt.hashSync(password, salt);
 
@@ -54,7 +52,7 @@ exports.register = catchAsyncErrors(async (req, res, next) => {
     first_name: first_name,
     last_name: last_name,
     password: hash,
-    role,
+    role: "buyer",
     isVerified: false,
   });
 
